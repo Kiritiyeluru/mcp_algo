@@ -1,0 +1,12 @@
+# Default owners for everything
+* @Kiritiyeluru
+
+# Documentation owners
+/docs/ @Kiritiyeluru
+*.md @Kiritiyeluru
+
+# Source code owners
+/src/ @Kiritiyeluru
+
+# Test owners
+/tests/ @Kiritiyeluru
