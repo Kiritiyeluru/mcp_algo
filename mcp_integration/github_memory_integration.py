@@ -10,35 +10,67 @@ Dependencies: GitHub MCP, Memory MCP
 Related Files: sequential_integration.py, monitoring.py
 """
 
-# Implementation Guide:
-# 1. Context Storage
-# - Use GitHub MCP to capture issue/PR data
-# - Store in Memory MCP for persistence
-# - Track metadata and relationships
+def store_issue_context(owner, repo, issue_number):
+    """Store GitHub issue context in Memory MCP"""
+    # Get issue data using GitHub MCP
+    issue_data = {
+        "owner": owner,
+        "repo": repo,
+        "issue_number": issue_number
+    }
+    
+    # Create entities in Memory MCP
+    entities = [{
+        "name": f"issue_{issue_number}",
+        "entityType": "github_issue",
+        "observations": [
+            f"Repository: {owner}/{repo}",
+            f"Issue number: {issue_number}"
+        ]
+    }]
+    
+    create_entities({"entities": entities})
+    return True
 
-# 2. Data Flow
-# - GitHub MCP -> Memory MCP
-# - Automatic context updates
-# - Error tracking and recovery
+def store_pr_context(owner, repo, pull_number):
+    """Store GitHub PR context in Memory MCP"""
+    # Get PR data using GitHub MCP
+    pr_data = {
+        "owner": owner,
+        "repo": repo,
+        "pull_number": pull_number
+    }
+    
+    # Create entities in Memory MCP
+    entities = [{
+        "name": f"pr_{pull_number}",
+        "entityType": "github_pr",
+        "observations": [
+            f"Repository: {owner}/{repo}",
+            f"PR number: {pull_number}"
+        ]
+    }]
+    
+    create_entities({"entities": entities})
+    return True
 
-# 3. Integration Points
-# - Issue tracking
-# - PR management
-# - Comment history
-# - Context preservation
+def link_issue_pr(issue_number, pr_number):
+    """Create relation between issue and PR in Memory MCP"""
+    relations = [{
+        "from": f"issue_{issue_number}",
+        "to": f"pr_{pr_number}",
+        "relationType": "linked_to"
+    }]
+    
+    create_relations({"relations": relations})
+    return True
 
-# Example Usage:
-"""
-# GitHub MCP operations
-issue_data = github_mcp.get_issue(owner="repo_owner", repo="repo_name", issue_number=123)
+def get_issue_context(issue_number):
+    """Retrieve issue context from Memory MCP"""
+    result = search_nodes({"query": f"issue_{issue_number}"})
+    return result
 
-# Store in Memory MCP
-memory_mcp.store_context(
-    key="github_issue_123",
-    data=issue_data,
-    metadata={"type": "issue", "source": "github"}
-)
-
-# Retrieve context
-stored_context = memory_mcp.get_context("github_issue_123")
-"""
+def get_pr_context(pr_number):
+    """Retrieve PR context from Memory MCP"""
+    result = search_nodes({"query": f"pr_{pr_number}"})
+    return result
