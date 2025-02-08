@@ -10,39 +10,61 @@ Dependencies: Sequential Thinking MCP, Memory MCP
 Related Files: github_memory_integration.py, monitoring.py
 """
 
-# Implementation Guide:
-# 1. Thought Process Management
-# - Capture sequential thinking steps
-# - Store decision chains
-# - Track reasoning process
+def store_thought_process(context_id, problem):
+    """Store sequential thinking process in Memory MCP"""
+    # Generate thought process using Sequential Thinking MCP
+    thought = sequentialthinking({
+        "thought": f"Analyzing problem: {problem}",
+        "thoughtNumber": 1,
+        "totalThoughts": 5,
+        "nextThoughtNeeded": True
+    })
+    
+    # Create entity in Memory MCP
+    entities = [{
+        "name": f"thought_process_{context_id}",
+        "entityType": "sequential_thinking",
+        "observations": [
+            f"Problem: {problem}",
+            f"Initial thought: {thought['thought']}"
+        ]
+    }]
+    
+    create_entities({"entities": entities})
+    return context_id
 
-# 2. Data Flow
-# - Sequential Thinking -> Memory MCP
-# - Thought process preservation
-# - Context continuity
+def add_thought_step(context_id, step_number, previous_thought):
+    """Add new thought step to existing process"""
+    # Generate next thought
+    thought = sequentialthinking({
+        "thought": f"Building on: {previous_thought}",
+        "thoughtNumber": step_number,
+        "totalThoughts": 5,
+        "nextThoughtNeeded": step_number < 5
+    })
+    
+    # Add observation to existing entity
+    add_observations({
+        "observations": [{
+            "entityName": f"thought_process_{context_id}",
+            "contents": [f"Step {step_number}: {thought['thought']}"]
+        }]
+    })
+    
+    return thought
 
-# 3. Integration Points
-# - Decision tracking
-# - Analysis storage
-# - Pattern recognition
-# - Context preservation
+def link_thought_to_issue(thought_id, issue_number):
+    """Link thought process to GitHub issue"""
+    relations = [{
+        "from": f"thought_process_{thought_id}",
+        "to": f"issue_{issue_number}",
+        "relationType": "analysis_for"
+    }]
+    
+    create_relations({"relations": relations})
+    return True
 
-# Example Usage:
-"""
-# Sequential thinking operations
-thought_process = sequential_mcp.analyze_problem(
-    context="problem_context",
-    steps=5,
-    depth=3
-)
-
-# Store in Memory MCP
-memory_mcp.store_context(
-    key="sequential_analysis_123",
-    data=thought_process,
-    metadata={"type": "analysis", "source": "sequential"}
-)
-
-# Retrieve analysis
-stored_analysis = memory_mcp.get_context("sequential_analysis_123")
-"""
+def get_thought_process(context_id):
+    """Retrieve complete thought process"""
+    result = search_nodes({"query": f"thought_process_{context_id}"})
+    return result
