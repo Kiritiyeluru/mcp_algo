@@ -1,0 +1,76 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.py'
+      - 'docs/**'
+      - '.github/workflows/documentation.yml'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov jinja2 markdown
+        
+    - name: Run tests
+      run: |
+        pytest tests/documentation/ --cov=documentation --cov-report=xml
+        
+    - name: Generate documentation
+      run: |
+        python -c "
+        from documentation.generators.docstring_parser import DocStringParser
+        from documentation.generators.template_processor import TemplateProcessor
+        import os
+        
+        # Process Python files
+        for root, dirs, files in os.walk('documentation'):
+            for file in files:
+                if file.endswith('.py'):
+                    parser = DocStringParser(os.path.join(root, file))
+                    data = {
+                        'metadata': parser.extract_metadata(),
+                        'docstring': parser.parse_docstring(parser.module_ast)
+                    }
+                    
+                    processor = TemplateProcessor('docs/templates')
+                    markdown = processor.generate_markdown(data)
+                    
+                    # Save documentation
+                    out_path = os.path.join('docs/generated', 
+                                          os.path.relpath(root, 'documentation'),
+                                          file.replace('.py', '.md'))
+                    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+                    with open(out_path, 'w') as f:
+                        f.write(markdown)
+        "
+        
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+        
+    - name: Commit documentation
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/generated/
+        git commit -m "Update generated documentation" || exit 0
+        git push
