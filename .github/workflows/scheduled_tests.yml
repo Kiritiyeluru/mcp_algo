@@ -1,0 +1,45 @@
+name: Scheduled Integration Tests
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
+  workflow_dispatch:
+
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Run Smoke Tests
+      run: python -m tests.smoke_tests
+
+  full-suite:
+    needs: smoke-tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Run Full Test Suite
+      run: |
+        python -m pytest tests/test_integration.py
+        python -m pytest tests/test_performance.py
+    
+    - name: Process Results
+      run: python -m monitoring.test_dashboard
+
+  cleanup:
+    needs: full-suite
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Clean Test Data
+      run: python -m tests.test_data cleanup
