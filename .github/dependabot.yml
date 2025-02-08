@@ -8,8 +8,9 @@ updates:
     labels:
       - "dependencies"
       - "automated"
-    reviewers:
-      - "Kiritiyeluru"
     commit-message:
       prefix: "deps"
-      include: "scope"
+    assignees:
+      - "Kiritiyeluru"
+    reviewers:
+      - "Kiritiyeluru"

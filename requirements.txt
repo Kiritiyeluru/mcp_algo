@@ -1,0 +1,19 @@
+# Core Dependencies
+pytest>=7.0.0
+github3.py>=1.0.0
+
+# Testing Dependencies
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
+
+# Documentation
+Sphinx>=5.0.0
+
+# Type Checking
+mypy>=1.0.0
+
+# Code Quality
+flake8>=6.0.0
+black>=23.0.0
+
+# Note: MCP server dependencies are managed separately
