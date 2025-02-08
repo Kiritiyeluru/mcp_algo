@@ -7,4 +7,9 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "automerge"
+      - "automated"
+    reviewers:
+      - "Kiritiyeluru"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
