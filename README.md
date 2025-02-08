@@ -1,39 +1,74 @@
-# MCP Algo
+# MCP Algo Documentation System
 
-Repository for MCP algorithms and documentation system.
+## Overview
 
-## Project Structure
+The MCP Algo Documentation System is an advanced, automated documentation generation pipeline that leverages the Model Context Protocol (MCP) to create comprehensive, context-aware documentation for Python projects.
 
-- `/docs` - Documentation and MCP related files
-  - `/ai_context` - AI generation context and history
-  - `/dependencies` - Dependency tracking and documentation
-  - `/setup` - Installation and configuration guides
-  - `/mcp` - MCP server configurations and documentation
-  - `/templates` - Documentation templates
-  - `/architecture` - System design and component relationships
-- `/src` - Source code (reserved for future algo trading system)
-- `/tests` - Test files
-- `/scripts` - Utility scripts and tools
-- `/.github` - GitHub specific configurations
+## Features
 
-## Documentation
+- 🔍 Automatic docstring parsing
+- 🌐 Cross-reference generation
+- 📊 Dependency graph visualization
+- 🧪 Robust testing framework
+- 🤖 GitHub Actions integration
 
-- Setup guides can be found in `/docs/setup`
-- MCP configuration details in `/docs/mcp`
-- Contributing guidelines in CONTRIBUTING.md
+## Components
 
-## Project Status
+### Documentation Generators
 
-Currently in setup phase, focusing on:
-- Documentation system implementation
-- MCP server integration
-- Error prevention framework
-- Development environment setup
+1. **DocStringParser**
+   - Extracts metadata and structured information from Python docstrings
+   - Supports complex docstring formats
 
-## Environment
+2. **TemplateProcessor**
+   - Converts parsed docstrings into formatted documentation
+   - Supports multiple output formats (Markdown, HTML)
 
-- Windows 11 Pro
-- VSCode (local and remote SSH)
-- Python-based implementation
-- GitHub repository
-- Configured MCP servers (GitHub, Memory, Brave, Apify, Sequential Thinking, Filesystem)
+3. **CrossReferenceManager**
+   - Analyzes dependencies between modules
+   - Generates cross-reference links
+   - Exports dependency graphs
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+### Running Tests
+
+```bash
+pytest tests/documentation/
+```
+
+### Generating Documentation
+
+```bash
+python run_tests.py
+```
+
+## Workflow
+
+1. Docstrings are parsed by `DocStringParser`
+2. Cross-references are analyzed by `CrossReferenceManager`
+3. Documentation is generated using `TemplateProcessor`
+4. Output is saved in `docs/generated/`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push and create a Pull Request
+
+## License
+
+MIT License
+
+## Acknowledgments
+
+- MCP Protocol
+- GitHub Actions
+- pytest
