@@ -1,0 +1,60 @@
+name: MCP Integration Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        pip install -r requirements.txt
+    
+    - name: Verify MCP Server Access
+      run: |
+        python -c "from mcp_integration import github_memory_integration as gm"
+        python -c "from mcp_integration import sequential_integration as si"
+        python -c "from mcp_integration import monitoring as mon"
+    
+    - name: Run Integration Tests
+      run: |
+        pytest tests/test_integration.py -v --cov=mcp_integration
+    
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          .coverage
+          coverage.xml
+          test-results.xml
+    
+    - name: Create Test Report Issue
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python -c '
+        from github import Github
+        g = Github(os.environ["GITHUB_TOKEN"])
+        repo = g.get_repo("${{ github.repository }}")
+        repo.create_issue(
+            title="Test Report: " + "${{ github.sha }}".split()[0],
+            body="Test run completed.\nCommit: ${{ github.sha }}\nWorkflow: ${{ github.workflow }}\nResults attached in workflow artifacts.",
+            labels=["test-report"]
+        )'
