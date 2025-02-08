@@ -26,7 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov jinja2 markdown
+        pip install pytest pytest-cov jinja2 markdown networkx pydot
         
     - name: Run tests
       run: |
@@ -37,7 +37,18 @@ jobs:
         python -c "
         from documentation.generators.docstring_parser import DocStringParser
         from documentation.generators.template_processor import TemplateProcessor
+        from documentation.generators.cross_reference_manager import CrossReferenceManager
         import os
+        
+        # Cross-reference analysis
+        ref_manager = CrossReferenceManager('.')
+        ref_manager.analyze_dependencies()
+        
+        # Export dependency graph
+        graph_dot = ref_manager.export_dependency_graph()
+        os.makedirs('docs/graphs', exist_ok=True)
+        with open('docs/graphs/dependency_graph.dot', 'w') as f:
+            f.write(graph_dot)
         
         # Process Python files
         for root, dirs, files in os.walk('documentation'):
@@ -46,7 +57,8 @@ jobs:
                     parser = DocStringParser(os.path.join(root, file))
                     data = {
                         'metadata': parser.extract_metadata(),
-                        'docstring': parser.parse_docstring(parser.module_ast)
+                        'docstring': parser.parse_docstring(parser.module_ast),
+                        'references': ref_manager.generate_reference_links()
                     }
                     
                     processor = TemplateProcessor('docs/templates')
@@ -55,7 +67,7 @@ jobs:
                     # Save documentation
                     out_path = os.path.join('docs/generated', 
                                           os.path.relpath(root, 'documentation'),
-                                          file.replace('.py', '.md'))
+                                          file.replace('.py', '.md'))\n
                     os.makedirs(os.path.dirname(out_path), exist_ok=True)
                     with open(out_path, 'w') as f:
                         f.write(markdown)
@@ -69,8 +81,8 @@ jobs:
         
     - name: Commit documentation
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add docs/generated/
-        git commit -m "Update generated documentation" || exit 0
+        git config --local user.email \"action@github.com\"
+        git config --local user.name \"GitHub Action\"
+        git add docs/generated/ docs/graphs/
+        git commit -m \"Update generated documentation and dependency graph\" || exit 0
         git push
