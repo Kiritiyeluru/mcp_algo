@@ -1,21 +1,20 @@
 ---
 name: Documentation Update
-description: Suggest an improvement or update to documentation
-title: '[DOCS] '
+description: Request or track documentation changes
+title: '[DOCS]: '
 labels: ['documentation']
-assignees: []
-
+assignees: ['Kiritiyeluru']
 ---
 
-## Documentation Location
+## Documentation Type
+- [ ] Setup/Installation
+- [ ] Dependencies
+- [ ] Configuration
+- [ ] MCP Integration
+- [ ] AI Context
 
-## Proposed Changes
+## Changes Needed
 
-## Reason for Update
+## Context
 
-## Validation Required
-
-## MCP Context
-- Related MCP Servers:
-- AI Context Reference:
-- Dependencies Affected:
+## Validation Steps
