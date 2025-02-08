@@ -1,0 +1,43 @@
+# MCP Integration Configuration
+
+github_mcp:
+  enabled: true
+  features:
+    - documentation_management
+    - error_tracking
+    - workflow_automation
+  paths:
+    docs: docs/
+    templates: docs/templates/
+    automation: docs/automation/
+
+sequential_thinking_mcp:
+  enabled: true
+  features:
+    - implementation_planning
+    - validation_steps
+    - context_analysis
+  integration:
+    - documentation_generation
+    - error_prevention
+
+memory_mcp:
+  enabled: true
+  features:
+    - context_retention
+    - decision_tracking
+    - history_preservation
+  storage:
+    path: docs/ai_context/
+    format: json
+
+filesystem_mcp:
+  enabled: true
+  features:
+    - file_management
+    - structure_maintenance
+    - template_application
+  paths:
+    root: ./
+    docs: docs/
+    src: src/
