@@ -1,41 +1,23 @@
-# MCP Algo Documentation System
+# MCP Documentation System
 
 ## Overview
 
-The MCP Algo Documentation System is an advanced, automated documentation generation pipeline that leverages the Model Context Protocol (MCP) to create comprehensive, context-aware documentation for Python projects.
+An advanced, automated documentation generation pipeline for Python projects.
 
 ## Features
 
-- 🔍 Automatic docstring parsing
+- 🔍 Automated docstring parsing
 - 🌐 Cross-reference generation
 - 📊 Dependency graph visualization
-- 🧪 Robust testing framework
-- 🤖 GitHub Actions integration
+- 🚀 Performance-optimized parsing
 
-## Components
+## Quick Start
 
-### Documentation Generators
-
-1. **DocStringParser**
-   - Extracts metadata and structured information from Python docstrings
-   - Supports complex docstring formats
-
-2. **TemplateProcessor**
-   - Converts parsed docstrings into formatted documentation
-   - Supports multiple output formats (Markdown, HTML)
-
-3. **CrossReferenceManager**
-   - Analyzes dependencies between modules
-   - Generates cross-reference links
-   - Exports dependency graphs
-
-## Installation
+### Installation
 
 ```bash
 pip install -r requirements.txt
 ```
-
-## Usage
 
 ### Running Tests
 
@@ -43,32 +25,48 @@ pip install -r requirements.txt
 pytest tests/documentation/
 ```
 
-### Generating Documentation
+## Performance Optimization
 
-```bash
-python run_tests.py
-```
+The MCP Documentation System is designed with performance in mind:
 
-## Workflow
+- Efficient AST parsing
+- Parallel processing support
+- Memory-conscious design
+- Configurable parsing depths
 
-1. Docstrings are parsed by `DocStringParser`
-2. Cross-references are analyzed by `CrossReferenceManager`
-3. Documentation is generated using `TemplateProcessor`
-4. Output is saved in `docs/generated/`
+### Profiling Tools
+
+- `memory_profiler`
+- `line_profiler`
+- `py-spy`
+
+See [PERFORMANCE.md](PERFORMANCE.md) for detailed optimization strategies.
+
+## Comprehensive Documentation
+
+For detailed usage and configuration, refer to:
+- [DOCUMENTATION.md](DOCUMENTATION.md)
+- [PERFORMANCE.md](PERFORMANCE.md)
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Commit your changes
-4. Push and create a Pull Request
+3. Implement changes
+4. Write/update tests
+5. Submit Pull Request
 
 ## License
 
 MIT License
 
-## Acknowledgments
+## Future Roadmap
 
-- MCP Protocol
-- GitHub Actions
-- pytest
+- [ ] Multi-language support
+- [ ] Advanced template customization
+- [ ] Machine learning-assisted documentation
+- [ ] Enhanced performance optimizations
+
+## Contact
+
+For questions or support, please open an issue in the GitHub repository.
