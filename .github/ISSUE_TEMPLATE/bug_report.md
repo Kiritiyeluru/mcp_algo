@@ -1,32 +1,35 @@
 ---
 name: Bug Report
-description: Create a report to help improve error prevention
+about: Create a report to help us improve
 title: '[BUG] '
-labels: ['bug', 'triage']
-assignees: []
+labels: bug
+assignees: ''
 
 ---
 
-## Error Description
+**Error Description**
+A clear and concise description of the error.
 
-## Environment
-- OS: [Windows 11 Pro]
+**Environment**
+- OS: Windows 11 Pro
 - Python Version:
-- MCP Servers Involved:
+- MCP Versions:
 
-## Error Context
-- Component:
-- Related Documentation:
-- AI Context Reference:
+**Reproduction Steps**
+1. Step 1
+2. Step 2
+3. ...
 
-## Validation Steps
-1.
-2.
-3.
+**Expected Behavior**
+What should have happened?
 
-## Error Pattern
-- Category:
-- Previous Occurrences:
-- Prevention Measures:
+**Actual Behavior**
+What actually happened?
 
-## Additional Context
+**Error Context**
+- Related Components:
+- AI Generation Context:
+- Relevant Dependencies:
+
+**Additional Context**
+Add any other context about the problem here.
