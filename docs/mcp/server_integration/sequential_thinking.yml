@@ -1,0 +1,33 @@
+# Sequential Thinking MCP Integration
+
+thinking_process:
+  documentation:
+    - context_analysis
+    - requirement_validation
+    - implementation_planning
+
+  validation:
+    - completeness_check
+    - consistency_verification
+    - context_preservation
+
+  error_prevention:
+    - pattern_analysis
+    - solution_validation
+    - prevention_planning
+
+automation_hooks:
+  planning:
+    - documentation_structure
+    - implementation_steps
+    - validation_rules
+
+  validation:
+    - context_verification
+    - completeness_check
+    - consistency_validation
+
+  error_handling:
+    - pattern_recognition
+    - solution_development
+    - prevention_implementation
