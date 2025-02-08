@@ -1,13 +1,23 @@
 # MCP Algorithm Documentation
 
-## Development Guidelines
-- All code must have docstrings and type hints
-- Minimum 80% test coverage required
-- Documentation must be updated with code changes
-- Security scans must pass before merging
+This repository contains documentation for the MCP algorithm implementation.
 
-## Documentation Structure
-- `/docs/api/`: API documentation
-- `/docs/ai_context/`: AI development context
-- `/docs/tutorials/`: Usage guides
-- `/docs/development/`: Development setup
+## Directory Structure
+
+- `dependencies/`: Project dependency documentation and tracking
+- `ai_context/`: AI generation context and history
+- `monitoring/`: Test and monitoring system documentation
+
+## Key Components
+
+- Test Orchestration System
+- Test Optimization Engine
+- Intelligent Test Selection
+- Advanced Failure Analysis
+
+## Environment Setup
+
+- Windows 11 Pro
+- VSCode (local and remote SSH)
+- Python-based implementation
+- Required MCPs: GitHub, Memory, Sequential, Brave, Apify
