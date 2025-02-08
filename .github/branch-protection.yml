@@ -1,0 +1,23 @@
+name: Branch Protection Rules
+
+protection:
+  main:
+    required_status_checks:
+      strict: true
+      contexts:
+        - continuous-integration/github-actions
+    enforce_admins: true
+    required_pull_request_reviews:
+      required_approving_review_count: 1
+      dismiss_stale_reviews: true
+    allow_force_pushes: false
+    allow_deletions: false
+    
+  integration:
+    required_status_checks:
+      strict: false
+      contexts:
+        - test/automated-checks
+    required_pull_request_reviews:
+      required_approving_review_count: 1
+    allow_force_pushes: false
