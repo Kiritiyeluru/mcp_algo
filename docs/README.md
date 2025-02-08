@@ -1,23 +1,14 @@
 # MCP Algorithm Documentation
 
-This repository contains documentation for the MCP algorithm implementation.
+This directory contains the automated documentation system for the MCP algorithm project.
 
-## Directory Structure
+## Structure
 
-- `dependencies/`: Project dependency documentation and tracking
-- `ai_context/`: AI generation context and history
-- `monitoring/`: Test and monitoring system documentation
+- `/dependencies/`: Project dependency tracking and analysis
+- `/ai_context/`: AI generation context preservation
+- `/templates/`: Documentation templates
+- `/generated/`: Auto-generated documentation
 
-## Key Components
+## Setup
 
-- Test Orchestration System
-- Test Optimization Engine
-- Intelligent Test Selection
-- Advanced Failure Analysis
-
-## Environment Setup
-
-- Windows 11 Pro
-- VSCode (local and remote SSH)
-- Python-based implementation
-- Required MCPs: GitHub, Memory, Sequential, Brave, Apify
+Refer to `setup.md` for configuration instructions.
