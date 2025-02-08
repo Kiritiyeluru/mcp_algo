@@ -1,15 +1,18 @@
-# AI Implementation Context
+# AI Context Storage
 
-This directory maintains documentation of AI-assisted development:
+Stores generation context and history for AI-assisted code generation.
 
-## Directory Structure
-- `conversations/`: AI interaction logs
-- `decisions/`: Implementation decisions and rationale
-- `patterns/`: Common patterns and solutions
-- `reviews/`: AI code review feedback
+## Structure
+- current_context.json: Latest generation context
+- context_history.json: Historical context data
 
-## Usage Guidelines
-1. Record all significant AI interactions
-2. Document key implementation decisions
-3. Track error patterns and solutions
-4. Maintain context for future development
+## Format
+```json
+{
+    "timestamp": "ISO datetime",
+    "component": "component_name",
+    "prompt": "generation prompt",
+    "generated_code": "code",
+    "modifications": ["list of modifications"]
+}
+```
