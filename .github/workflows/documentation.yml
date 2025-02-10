@@ -6,13 +6,14 @@ on:
     paths:
       - '**.py'
       - 'docs/**'
+      - 'mkdocs.yml'
       - '.github/workflows/documentation.yml'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  test-and-generate:
+  test-and-document:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,83 +21,64 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: pip
         
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-cov jinja2 markdown networkx pydot sphinx
+        pip install -r requirements.txt
+        pip install -r docs/requirements.txt
         
-    - name: Run Unit Tests
+    - name: Run Tests
       run: |
-        pytest tests/documentation/ --cov=documentation --cov-report=xml
-        
-    - name: Run Integration Tests
-      run: |
-        PYTHONPATH=. pytest tests/documentation/test_documentation_pipeline.py -v
+        pytest tests/documentation/ --cov=documentation --cov-report=xml -v
         
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage.xml
         fail_ci_if_error: true
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
         
-    - name: Generate Documentation
+    - name: Install Mermaid CLI
+      run: npm install -g @mermaid-js/mermaid-cli
+        
+    - name: Generate API Documentation
       run: |
-        python -c "
-        from documentation.generators.docstring_parser import DocStringParser
-        from documentation.generators.template_processor import TemplateProcessor
-        from documentation.generators.cross_reference_manager import CrossReferenceManager
-        import os
+        python docs/scripts/generate_api_docs.py
         
-        # Ensure output directories exist
-        os.makedirs('docs/generated', exist_ok=True)
-        os.makedirs('docs/graphs', exist_ok=True)
-        
-        # Cross-reference analysis
-        ref_manager = CrossReferenceManager('.')
-        ref_manager.analyze_dependencies()
-        
-        # Export dependency graph
-        graph_dot = ref_manager.export_dependency_graph()
-        with open('docs/graphs/dependency_graph.dot', 'w') as f:
-            f.write(graph_dot)
-        
-        # Process Python files
-        for root, dirs, files in os.walk('.'):
-            for file in files:
-                if file.endswith('.py'):
-                    file_path = os.path.join(root, file)
-                    try:
-                        parser = DocStringParser(file_path)
-                        data = {
-                            'metadata': parser.extract_metadata(),
-                            'docstring': parser.parse_docstring(parser.module_ast),
-                            'references': ref_manager.generate_reference_links()
-                        }
-                        
-                        processor = TemplateProcessor('docs/templates')
-                        markdown = processor.generate_markdown(data)
-                        
-                        # Save documentation
-                        out_path = os.path.join('docs/generated', 
-                                              os.path.relpath(root, '.'),
-                                              file.replace('.py', '.md'))
-                        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-                        with open(out_path, 'w') as f:
-                            f.write(markdown)
-                    except Exception as e:
-                        print(f'Error processing {file_path}: {e}')
-        "
-        
-    - name: Commit Documentation
+    - name: Generate Dependency Graphs
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add docs/generated/ docs/graphs/
-        git commit -m "Update generated documentation and dependency graph" || exit 0
-        git push
+        python docs/scripts/generate_dependency_graphs.py
+        mmdc -i docs/graphs/dependencies.mmd -o docs/graphs/dependencies.svg
+        
+    - name: Build MkDocs
+      run: |
+        mkdocs build --strict
+        
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+
+    - name: Store Documentation Context
+      run: |
+        python docs/scripts/store_doc_context.py
+
+    - name: Error Analysis
+      if: failure()
+      run: |
+        python docs/scripts/analyze_doc_errors.py

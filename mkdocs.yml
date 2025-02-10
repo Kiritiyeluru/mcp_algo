@@ -1,0 +1,47 @@
+site_name: MCP Algorithm Documentation
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - search.share
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+  - git-revision-date
+  - mermaid2
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - Installation: guide/installation.md
+    - Getting Started: guide/getting-started.md
+    - Configuration: guide/configuration.md
+  - API Reference:
+    - Cross Reference Manager: api/cross_reference_manager.md
+    - Docstring Parser: api/docstring_parser.md
+    - Template Processor: api/template_processor.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Code of Conduct: development/code_of_conduct.md
+  - Performance: performance.md
