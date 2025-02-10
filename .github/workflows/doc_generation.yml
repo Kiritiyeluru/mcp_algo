@@ -4,23 +4,65 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'src/**'
+      - '**.py'
       - 'docs/**'
-      - '.github/workflows/doc_generation.yml'
+      - 'mkdocs.yml'
+      - '!docs/generated/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'src/**'
-      - 'docs/**'
+  workflow_dispatch:
 
 jobs:
-  generate-docs:
+  build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      - name: Document Generation Check
-        run: |
-          # Template application
-          # AI context preservation
-          # Cross-reference updates
-          echo "Documentation generation workflow placeholder"
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r docs/requirements.txt
+
+    - name: Cache MkDocs
+      uses: actions/cache@v3
+      with:
+        path: .cache/mkdocs
+        key: mkdocs-${{ hashFiles('mkdocs.yml') }}
+        restore-keys: mkdocs-
+
+    - name: Generate API documentation
+      run: |
+        python docs/scripts/generate_api_docs.py
+      env:
+        MEMORY_MCP_RETRY_COUNT: 3
+        MEMORY_MCP_RETRY_DELAY: 1
+
+    - name: Build MkDocs
+      run: |
+        mkdocs build --clean --strict
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+        force_orphan: true
+
+    - name: Store build context
+      if: always()
+      run: |
+        python docs/scripts/store_build_context.py
+      env:
+        MEMORY_MCP_RETRY_COUNT: 3
+        MEMORY_MCP_RETRY_DELAY: 1
