@@ -1,105 +1,103 @@
 """
 File: documentation/generators/docstring_parser.py
-Purpose: Parse and process Python docstrings for documentation generation
+Purpose: Parse docstrings from Python source code
 Author: AI Assistant
 Environment: Production
-Dependencies: ast, inspect
+Dependencies: ast, typing
 """
 
 import ast
-import inspect
-from typing import Dict, List, Optional
+from typing import Dict, Any, Optional
+from sequential_mcp import SequentialMCP
 
 class DocStringParser:
-    """Parse and extract information from Python docstrings.
+    """Parse and extract documentation from Python docstrings."""
     
-    This class handles parsing of docstrings using AST and inspect modules,
-    extracting metadata, type hints, and generating structured documentation.
-    
-    Attributes:
-        source_file (str): Path to the Python file being parsed
-        module_ast (ast.Module): AST representation of the source file
-    """
-    
-    def __init__(self, source_file: str):
-        """Initialize DocStringParser with source file.
+    def __init__(self, file_path: str):
+        """
+        Initialize DocStringParser.
         
         Args:
-            source_file: Path to Python source file
+            file_path: Path to Python source file
         """
-        self.source_file = source_file
-        with open(source_file, 'r') as f:
-            self.module_ast = ast.parse(f.read())
-    
-    def extract_metadata(self) -> Dict[str, str]:
-        """Extract metadata from module docstring.
+        self.file_path = file_path
+        self.module_ast = self._parse_file()
+        self.sequential_mcp = SequentialMCP()
+        
+    def _parse_file(self) -> ast.Module:
+        """
+        Parse Python file into AST.
         
         Returns:
-            Dict containing parsed metadata fields
+            AST module node
         """
-        module_docstring = ast.get_docstring(self.module_ast)
-        if not module_docstring:
-            return {}
+        with open(self.file_path, 'r') as f:
+            return ast.parse(f.read())
             
-        metadata = {}
-        current_field = None
+    def extract_metadata(self) -> Dict[str, Any]:
+        """
+        Extract metadata from module-level docstring.
         
-        for line in module_docstring.split('\n'):
-            if line.startswith('@'):
-                key = line[1:].split(':')[0].strip()
-                value = line.split(':', 1)[1].strip() if ':' in line else ''
-                metadata[key] = value
+        Returns:
+            Dictionary of metadata fields
+        """
+        try:
+            # Get module docstring
+            if not (isinstance(self.module_ast.body[0], ast.Expr) and 
+                    isinstance(self.module_ast.body[0].value, ast.Str)):
+                return {}
                 
-        return metadata
+            docstring = self.module_ast.body[0].value.s
+            
+            # Use sequential thinking to parse metadata
+            return self.sequential_mcp.analyze_metadata(docstring)
+            
+        except Exception as e:
+            self.sequential_mcp.handle_error({
+                'context': 'metadata_extraction',
+                'file': self.file_path,
+                'error': str(e)
+            })
+            raise
     
-    def parse_docstring(self, node: ast.AST) -> Dict[str, str]:
-        """Parse docstring from an AST node.
+    def parse_docstring(self, node: ast.AST) -> Optional[Dict[str, Any]]:
+        """
+        Parse docstring from AST node.
         
         Args:
-            node: AST node to parse docstring from
+            node: AST node to parse
             
         Returns:
-            Dict containing parsed docstring sections
+            Parsed docstring information
         """
-        docstring = ast.get_docstring(node)
-        if not docstring:
-            return {}
-            
-        sections = {
-            'description': [],
-            'args': [],
-            'returns': [],
-            'raises': [],
-            'examples': []
-        }
-        
-        current_section = 'description'
-        
-        for line in docstring.split('\n'):
-            line = line.strip()
-            if line.lower().startswith(('args:', 'returns:', 'raises:', 'examples:')):
-                current_section = line.lower().split(':')[0]
-            elif line:
-                sections[current_section].append(line)
+        try:
+            # Use sequential thinking for validation
+            validation = self.sequential_mcp.validate_docstring(node)
+            if not validation['valid']:
+                return None
                 
-        return {k: '\n'.join(v) for k, v in sections.items()}
-
-    def get_type_hints(self, node: ast.FunctionDef) -> Dict[str, str]:
-        """Extract type hints from function definition.
-        
-        Args:
-            node: Function definition AST node
+            result = {
+                'description': '',
+                'args': [],
+                'returns': None,
+                'raises': []
+            }
             
-        Returns:
-            Dict mapping parameter names to type hints
-        """
-        type_hints = {}
-        
-        for arg in node.args.args:
-            if arg.annotation:
-                type_hints[arg.arg] = ast.unparse(arg.annotation)
+            docstring = ast.get_docstring(node)
+            if not docstring:
+                return result
                 
-        if node.returns:
-            type_hints['return'] = ast.unparse(node.returns)
+            # Parse with sequential thinking
+            parsed = self.sequential_mcp.parse_docstring_content(docstring)
             
-        return type_hints
+            result.update(parsed)
+            return result
+            
+        except Exception as e:
+            self.sequential_mcp.handle_error({
+                'context': 'docstring_parsing', 
+                'file': self.file_path,
+                'node': node.__class__.__name__,
+                'error': str(e)
+            })
+            raise
